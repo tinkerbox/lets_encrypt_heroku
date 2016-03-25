@@ -29,4 +29,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "platform-api"
   spec.add_dependency "acme-client"
+  spec.add_dependency "activesupport"
+  spec.add_dependency "rails"
 end

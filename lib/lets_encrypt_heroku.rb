@@ -25,20 +25,24 @@ module LetsEncryptHeroku
     heroku_platform_client = HerokuPlatformClient.new(LetsEncryptHeroku.configuration.heroku_platform_api_token, LetsEncryptHeroku.configuration.heroku_app_name)
 
     certificate_generator.authorize_domains do |domain, challenge|
-      # challenge.token
-      # challenge.filename # => ".well-known/acme-challenge/:some_token"
-      # challenge.file_content
-      # challenge.content_type
-      # TODO: save to database
+      binding.pry
+      ChallengeRecord.create do |record|
+        record.token = token
+        record.filename = filename
+        record.file_content = file_content
+        record.content_type = content_type
+      end
     end
 
     certificate_generator.generate do |certificate|
-      values = { 'LETS_ENCRYPT_CERTIFICATE' => certificate }
-      # certificate.request.private_key.to_pem
+      binding.pry
+      values = {
+        certificate_chain: certificate.chain_to_pem,
+        private_key: certificate.request.private_key.to_pem
+      }
       # certificate.to_pem
-      # certificate.chain_to_pem
       # certificate.fullchain_to_pem
-      heroku_platform_client.update_config(values)
+      heroku_platform_client.update_ssl_endpoint(values)
     end
   end
 
