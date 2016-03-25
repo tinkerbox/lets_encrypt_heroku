@@ -1,28 +1,20 @@
+require 'platform-api'
+
 module LetsEncryptHeroku
   class HerokuPlatformClient
 
-    def initialize(token, app)
-      @token, @app = token, app
+    def initialize(token, app, ssl_name)
+      @token, @app, @ssl_name = token, app, ssl_name
     end
 
     def update_ssl_endpoint(values = {})
-      if endpoint
-        heroku.ssl_endpoint.update(@app, endpoint, values)
-      else
-        heroku.ssl_endpoint.create(@app, values)
-      end
+      heroku.ssl_endpoint.update(@app, @ssl_name, values)
     end
 
     private
 
     def heroku
-      @heroku ||= PlatformAPI.connect_oauth(@token)
-    end
-
-    def endpoint
-      list = heroku.ssl_endpoint.list(@app)
-      binding.pry
-      heroku.ssl_endpoint.info(@app, list)
+      @heroku ||= ::PlatformAPI.connect_oauth(@token)
     end
 
   end

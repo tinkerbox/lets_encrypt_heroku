@@ -1,5 +1,11 @@
+require 'dotenv'
+Dotenv.load
+
 require 'lets_encrypt_heroku/version'
 require 'lets_encrypt_heroku/configuration'
+require 'lets_encrypt_heroku/certificate_generator'
+require 'lets_encrypt_heroku/heroku_platform_client'
+require 'lets_encrypt_heroku/challenge_engine'
 
 begin
   require 'pry'
@@ -12,6 +18,10 @@ module LetsEncryptHeroku
     attr_writer :configuration
   end
 
+  def self.root
+    File.expand_path '../..', __FILE__
+  end
+
   def self.configuration
     @configuration ||= Configuration.new
   end
@@ -20,30 +30,26 @@ module LetsEncryptHeroku
     yield configuration
   end
 
-  def run
-    certificate_generator = CertificateGenerator.new(LetsEncryptHeroku.configuration.email, LetsEncryptHeroku.configuration.email, LetsEncryptHeroku.configuration.private_key, [LetsEncryptHeroku.configuration.domain])
-    heroku_platform_client = HerokuPlatformClient.new(LetsEncryptHeroku.configuration.heroku_platform_api_token, LetsEncryptHeroku.configuration.heroku_app_name)
-
+  def self.authorize
     certificate_generator.authorize_domains do |domain, challenge|
-      binding.pry
-      ChallengeRecord.create do |record|
-        record.token = token
-        record.filename = filename
-        record.file_content = file_content
-        record.content_type = content_type
-      end
+      LetsEncryptHeroku::ChallengeRecord.create!(challenge)
     end
+  end
 
-    certificate_generator.generate do |certificate|
-      binding.pry
-      values = {
-        certificate_chain: certificate.chain_to_pem,
-        private_key: certificate.request.private_key.to_pem
-      }
-      # certificate.to_pem
-      # certificate.fullchain_to_pem
-      heroku_platform_client.update_ssl_endpoint(values)
+  def self.generate_certificates
+    certificate_generator.generate do |certificates|
+      heroku_platform_client.update_ssl_endpoint(certificates)
     end
+  end
+
+  private
+
+  def self.certificate_generator
+    @certificate_generator ||= CertificateGenerator.new(LetsEncryptHeroku.configuration.endpoint, LetsEncryptHeroku.configuration.email, LetsEncryptHeroku.configuration.private_key, [LetsEncryptHeroku.configuration.domain])
+  end
+
+  def self.heroku_platform_client
+    @heroku_platform_client ||= HerokuPlatformClient.new(LetsEncryptHeroku.configuration.heroku_platform_api_token, LetsEncryptHeroku.configuration.heroku_app_name, LetsEncryptHeroku.configuration.heroku_ssl_name)
   end
 
 end

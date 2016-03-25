@@ -1,7 +1,7 @@
-class CreateChallengeRecords < ActiveRecord::Migration
+class CreateChallengeRecordsTable < ActiveRecord::Migration
 
   def self.up
-    create_table :challenge_records do |t|
+    create_table :lets_encrypt_heroku_challenge_records do |t|
       t.string :token
       t.string :filename
       t.string :file_content
@@ -11,7 +11,7 @@ class CreateChallengeRecords < ActiveRecord::Migration
   end
 
   def self.down
-    drrop_table :challenge_records
+    drop_table :lets_encrypt_heroku_challenge_records
   end
 
 end
