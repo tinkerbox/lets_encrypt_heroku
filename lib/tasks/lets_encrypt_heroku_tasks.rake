@@ -1,4 +1,3 @@
-require 'rspec/core/rake_task'
 require 'lets_encrypt_heroku'
 
 namespace :lets_encrypt_heroku do
