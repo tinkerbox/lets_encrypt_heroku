@@ -5,6 +5,11 @@ SSL certificates from [Let's Encrypt](https://letsencrypt.org/) expire within 3 
 * Approving domains and generating certificate chains with Let's Encrypt servers; and
 * Updating certificates on Heroku's SSL Endpoint for custom domains.
 
+To accomplish this, the gem relies on two gems:
+
+* https://github.com/unixcharles/acme-client
+* https://github.com/heroku/platform-api
+
 This README.md is still a work in progress.
 
 ## Usage
