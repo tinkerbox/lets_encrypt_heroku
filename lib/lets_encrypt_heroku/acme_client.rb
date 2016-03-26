@@ -3,10 +3,10 @@ require 'acme/client'
 module LetsEncryptHeroku
   class AcmeClient
 
-    attr_accessor :endpoint, :email, :private_key_path
+    attr_accessor :endpoint, :email, :private_key
 
-    def initialize(endpoint, email, private_key_path)
-      @endpoint, @email, @private_key_path = endpoint, email, private_key_path
+    def initialize(endpoint, email, private_key)
+      @endpoint, @email, @private_key = endpoint, email, private_key
     end
 
     def authorize(domain)
@@ -47,10 +47,6 @@ module LetsEncryptHeroku
       @client
     rescue StandardError => e
       binding.pry
-    end
-
-    def private_key
-      @private_key ||= OpenSSL::PKey::RSA.new(File.read(private_key_path))
     end
 
   end

@@ -5,7 +5,7 @@ describe LetsEncryptHeroku::AcmeClient do
 
   let(:endpoint) { ENV["ENDPOINT"] }
   let(:email) { ENV["EMAIL"] }
-  let(:private_key) { File::open('spec/fixtures/keyfile.pem') }
+  let(:private_key) { OpenSSL::PKey::RSA.new(File::open('spec/fixtures/keyfile.pem')) }
   let(:domain_name) { 'www.example.com' }
 
   subject { LetsEncryptHeroku::AcmeClient.new(endpoint, email, private_key) }

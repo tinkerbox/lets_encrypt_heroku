@@ -15,13 +15,7 @@ module LetsEncryptHeroku
       @endpoint = ENV['ENDPOINT']
       @email = ENV['EMAIL']
       @domain = ENV['DOMAIN']
-      @private_key = File::open(private_key_path)
-    end
-
-    private
-
-    def private_key_path
-      File.join(LetsEncryptHeroku.root, 'spec/fixtures/keyfile.pem')
+      @private_key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY']) if ENV['PRIVATE_KEY']
     end
 
   end
