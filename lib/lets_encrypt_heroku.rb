@@ -1,6 +1,3 @@
-require 'dotenv'
-Dotenv.load
-
 require 'lets_encrypt_heroku/version'
 require 'lets_encrypt_heroku/configuration'
 require 'lets_encrypt_heroku/certificate_generator'
@@ -9,6 +6,8 @@ require 'lets_encrypt_heroku/challenge_engine'
 
 begin
   require 'pry'
+  require 'dotenv'
+  Dotenv.load
 rescue LoadError
 end
 
