@@ -38,6 +38,7 @@ module LetsEncryptHeroku
 
   def self.generate_certificates
     certificate_generator.generate do |certificates|
+      puts certificates.inspect
       heroku_platform_client.update_ssl_endpoint(certificates)
     end
   end
