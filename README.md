@@ -20,7 +20,7 @@ Once you're set up, this is all you have to do with your Heroku app:
     
     $ heroku run rake lets_encrypt_heroku:generate_certificates
 
-Or you could do both at the same time:
+Or you could do both at the same time (this is not working yet):
 
     $ heroku run rake lets_encrypt_heroku:authorize_and_generate_certificates
 
@@ -32,24 +32,31 @@ Install the gem:
 
 Generate migrations for storing the challenges:
 
-    $ rake lets_encrypt_heroku:install:migrations
+    $ rails g lets_encrypt_heroku
     $ rake db:migrate
 
-You should already have your Heroku SSL Endpoint set up, and your custom domains configured before your proceed. Also, if you haven't done so already, as you will need the token for the next step:
+You should already have your Heroku SSL Endpoint set up, and your custom domains configured before your proceed. Also, if you haven't done so already, as you will need the token for the next steps (note down the key that was generated):
 
     $ heroku plugins:install git@github.com:heroku/heroku-oauth.git
     $ heroku authorizations:create -d "Platform API token"
 
-Manage your configuration in config/initializers/lets_encrypt_heroku.rb file:
+Generate a private key to be used on the server, and copy it to your clipboard:
+
+    openssl genrsa 4096 > keyfile.pem
+    cat keyfile.pem | pbcopy
+
+I find it useful to manage your configuration using environment variables and use them in the config/initializers/lets_encrypt_heroku.rb file like so:
 
     LetsEncryptHeroku.configure do |config|
-      config.heroku_platform_api_token = ''
-      config.heroku_app_name = ''
-      config.heroku_ssl_name = ''
-      config.email = ''
-      config.domain = ''
-      config.private_key = ''
+      c.heroku_platform_api_token = ENV['HEROKU_PLATFORM_API_TOKEN']
+      c.heroku_app_name = ENV['HEROKU_APP_NAME']
+      c.heroku_ssl_name = ENV['HEROKU_SSL_NAME']
+      c.email = ENV['EMAIL']
+      c.domain = ENV['DOMAIN']
+      c.private_key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY']) if ENV['PRIVATE_KEY']
     end
+
+Rmember to paste the generated private key into Heroku's 'PRIVATE_KEY' environment variable.
 
 Mount the challenge engine in your config/routes.rb file:
 
@@ -68,6 +75,13 @@ Now deploy your app so that you can start accepting challenges with the challeng
 * Commit your changes (git commit -am 'Added some feature')
 * Push to the branch (git push origin my-new-feature)
 * Create new Pull Request
+
+## Roadmap
+
+* allow creation of the SSL Endpoint and auto-set config var for first-time users
+* figure out better way to handle private keys, and generated certificates
+* remove challenge records after a certain time with a rake task
+* more tests, with rspec, webmock, etc
 
 ## License
 
