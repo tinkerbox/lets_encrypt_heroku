@@ -56,7 +56,12 @@ I find it useful to manage your configuration using environment variables and us
       c.private_key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY']) if ENV['PRIVATE_KEY']
     end
 
-Rmember to paste the generated private key into Heroku's 'PRIVATE_KEY' environment variable.
+Rmember to paste the generated private key into Heroku's 'PRIVATE_KEY' environment variable. If using the CLI, ensure it is wrapped in quotes to preserve the newlines in the private key:
+
+    $ heroku config:add PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----
+    > ...
+    > -----END RSA PRIVATE KEY-----
+    > "
 
 Mount the challenge engine in your config/routes.rb file:
 
