@@ -36,7 +36,7 @@ module LetsEncryptHeroku
     private
 
     def client
-      @client ||= Acme::Client.new(private_key: private_key, endpoint: 'https://acme-v01.api.letsencrypt.org/')
+      @client ||= Acme::Client.new(private_key: private_key, endpoint: LetsEncryptHeroku.configuration.endpoint)
       registration = @client.register(contact: email)
       registration.agree_terms
       @client
