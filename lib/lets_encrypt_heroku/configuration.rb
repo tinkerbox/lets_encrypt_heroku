@@ -8,14 +8,7 @@ module LetsEncryptHeroku
     attr_accessor :endpoint, :email, :domain, :private_key
 
     def initialize
-      @heroku_platform_api_token = ENV['HEROKU_PLATFORM_API_TOKEN']
-      @heroku_app_name = ENV['HEROKU_APP_NAME']
-      @heroku_ssl_name = ENV['HEROKU_SSL_NAME']
-
-      @endpoint = ENV['ENDPOINT']
-      @email = ENV['EMAIL']
-      @domain = ENV['DOMAIN']
-      @private_key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY']) if ENV['PRIVATE_KEY']
+      @endpoint = 'https://acme-v01.api.letsencrypt.org/'
     end
 
   end
