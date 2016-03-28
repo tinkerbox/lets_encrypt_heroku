@@ -13,7 +13,7 @@ describe LetsEncryptHeroku do
         config.endpoint = ENV['ENDPOINT']
         config.email = ENV['EMAIL']
         config.domain = ENV['DOMAIN']
-        config.private_key = OpenSSL::PKey::RSA.new(File::open('spec/fixtures/keyfile.pem'))
+        config.private_key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
       end
     end
 
