@@ -31,8 +31,6 @@ module LetsEncryptHeroku
     def request_certificates(domains)
       request = Acme::Client::CertificateRequest.new(names: domains)
       certificate = client.new_certificate(request)
-    rescue StandardError => e
-      binding.pry
     end
 
     private
@@ -45,8 +43,6 @@ module LetsEncryptHeroku
     rescue Acme::Client::Error::Malformed => e
       # TODO: log e.message, typically it is just that the registration key was previously registered
       @client
-    rescue StandardError => e
-      binding.pry
     end
 
   end
